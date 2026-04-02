@@ -7,120 +7,83 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="GPS軌跡紀錄器" />
-  <title>GPS 軌跡紀錄器 PWA</title>
+  <title>GPS 軌跡紀錄器 Pro</title>
   <link rel="manifest" href="./manifest.json" />
   <link rel="apple-touch-icon" href="./icons/icon-192.png" />
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-    crossorigin=""
-  />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   <style>
-    :root {
-      --bg: #f8fafc;
-      --card: #ffffff;
-      --text: #0f172a;
-      --muted: #64748b;
-      --border: #e2e8f0;
-      --primary: #2563eb;
-      --primary-2: #1d4ed8;
-      --danger: #dc2626;
-      --danger-2: #b91c1c;
-      --secondary: #e2e8f0;
-      --secondary-2: #cbd5e1;
-      --shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
-      --radius: 18px;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: var(--bg);
-      color: var(--text);
-    }
-    .app {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 16px;
-      display: grid;
-      grid-template-columns: 400px 1fr;
-      gap: 16px;
-    }
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-    }
-    .panel { padding: 18px; }
-    h1 { margin: 0 0 6px; font-size: 24px; }
-    .sub { color: var(--muted); font-size: 14px; line-height: 1.5; }
-    .topline { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:18px; }
-    .badge { padding:7px 10px; border-radius:999px; font-size:12px; font-weight:700; background:#eef2ff; color:#3730a3; white-space:nowrap; }
+    :root { --bg:#f8fafc; --card:#fff; --text:#0f172a; --muted:#64748b; --border:#e2e8f0; --primary:#2563eb; --primary2:#1d4ed8; --secondary:#e2e8f0; --secondary2:#cbd5e1; --success:#16a34a; --success2:#15803d; --danger:#dc2626; --danger2:#b91c1c; --warning:#f59e0b; --shadow:0 10px 30px rgba(15,23,42,.08); --radius:18px; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    .wrap { max-width:1500px; margin:0 auto; padding:16px; display:grid; grid-template-columns:430px 1fr; gap:16px; }
+    .card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; }
+    .panel { padding:18px; }
+    .topline { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:16px; }
+    h1 { margin:0 0 6px; font-size:26px; }
+    .sub { color:var(--muted); font-size:14px; line-height:1.55; }
+    .badge { padding:7px 10px; border-radius:999px; font-size:12px; font-weight:700; white-space:nowrap; background:#eef2ff; color:#3730a3; }
     .badge.recording { background:#dcfce7; color:#166534; }
-    .field { margin-bottom:14px; }
+    .badge.paused { background:#fef3c7; color:#92400e; }
+    .field,.group { margin-bottom:12px; }
+    .group { border:1px solid var(--border); border-radius:14px; background:#fff; padding:12px; }
     label { display:block; font-size:13px; font-weight:700; margin-bottom:6px; }
-    input, select, button { font: inherit; }
-    .input, .select {
-      width:100%; border:1px solid var(--border); background:white; border-radius:12px; padding:11px 12px; outline:none;
-    }
-    .input:focus, .select:focus { border-color: var(--primary); box-shadow:0 0 0 3px rgba(37,99,235,.12); }
+    input,select,button,textarea { font:inherit; }
+    .input,.select,.textarea { width:100%; border:1px solid var(--border); background:white; border-radius:12px; padding:11px 12px; outline:none; }
+    .input:focus,.select:focus,.textarea:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(37,99,235,.12); }
     .inline { display:flex; gap:8px; }
-    .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
-    .stat { border:1px solid var(--border); border-radius:14px; padding:12px; background:#fff; }
+    .grid-2,.grid-3 { display:grid; gap:10px; margin-bottom:12px; }
+    .grid-2 { grid-template-columns:1fr 1fr; }
+    .grid-3 { grid-template-columns:repeat(3,1fr); }
+    .stat { border:1px solid var(--border); border-radius:14px; background:#fff; padding:12px; }
     .stat .k { font-size:12px; color:var(--muted); margin-bottom:6px; }
-    .stat .v { font-size:19px; font-weight:700; }
-    .btns { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+    .stat .v { font-size:18px; font-weight:700; }
+    .btns { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
     .btn { border:0; border-radius:14px; padding:11px 14px; cursor:pointer; font-weight:700; transition:.15s ease; }
     .btn:hover { transform:translateY(-1px); }
     .btn:disabled { opacity:.55; cursor:not-allowed; transform:none; }
-    .btn.primary { background:var(--primary); color:white; }
-    .btn.primary:hover { background:var(--primary-2); }
-    .btn.secondary { background:var(--secondary); color:var(--text); }
-    .btn.secondary:hover { background:var(--secondary-2); }
-    .btn.danger { background:var(--danger); color:white; }
-    .btn.danger:hover { background:var(--danger-2); }
-    .group { border:1px solid var(--border); border-radius:14px; padding:12px; margin-bottom:12px; background:#fff; }
+    .btn.primary { background:var(--primary); color:white; } .btn.primary:hover { background:var(--primary2); }
+    .btn.secondary { background:var(--secondary); color:var(--text); } .btn.secondary:hover { background:var(--secondary2); }
+    .btn.success { background:var(--success); color:white; } .btn.success:hover { background:var(--success2); }
+    .btn.danger { background:var(--danger); color:white; } .btn.danger:hover { background:var(--danger2); }
+    .btn.warning { background:var(--warning); color:white; }
     .row { display:flex; align-items:center; justify-content:space-between; gap:12px; }
-    .hint { color:var(--muted); font-size:12px; margin-top:4px; line-height:1.5; }
-    .switch {
-      appearance:none; width:50px; height:30px; border-radius:999px; background:#cbd5e1; position:relative; cursor:pointer; transition:.2s ease; border:none; flex:0 0 auto;
-    }
-    .switch::after {
-      content:""; width:22px; height:22px; border-radius:50%; background:white; position:absolute; top:4px; left:4px; transition:.2s ease; box-shadow:0 2px 8px rgba(0,0,0,.18);
-    }
-    .switch:checked { background:var(--primary); }
-    .switch:checked::after { left:24px; }
+    .hint { font-size:12px; color:var(--muted); line-height:1.55; margin-top:4px; }
     .separator { height:1px; background:var(--border); margin:16px 0; }
-    .mini { display:flex; gap:8px; align-items:center; color:var(--muted); font-size:13px; margin-bottom:8px; }
-    .alert { border-radius:14px; padding:12px; border:1px solid #dbeafe; background:#eff6ff; font-size:14px; line-height:1.5; }
+    .switch { appearance:none; width:50px; height:30px; border-radius:999px; background:#cbd5e1; position:relative; cursor:pointer; border:none; transition:.2s ease; flex:0 0 auto; }
+    .switch::after { content:""; position:absolute; top:4px; left:4px; width:22px; height:22px; border-radius:50%; background:white; box-shadow:0 2px 8px rgba(0,0,0,.18); transition:.2s ease; }
+    .switch:checked { background:var(--primary); } .switch:checked::after { left:24px; }
+    .alert { border-radius:14px; padding:12px; border:1px solid #dbeafe; background:#eff6ff; font-size:14px; line-height:1.55; }
     .alert strong { display:block; margin-bottom:4px; }
-    #map { width:100%; min-height:72vh; height:100%; }
-    .points { max-height:280px; overflow:auto; border:1px solid var(--border); border-radius:14px; padding:10px; background:#fff; }
-    .point { border:1px solid var(--border); border-radius:12px; padding:10px; margin-bottom:8px; font-size:13px; line-height:1.55; }
-    .point:last-child { margin-bottom:0; }
-    .footer-note { font-size:12px; color:var(--muted); margin-top:10px; line-height:1.6; }
-    .install-tip { margin-top: 12px; border:1px dashed #93c5fd; background:#eff6ff; padding:10px 12px; border-radius:12px; font-size:13px; color:#1e3a8a; }
-    @media (max-width: 980px) {
-      .app { grid-template-columns:1fr; }
-      #map { min-height:52vh; }
-    }
+    .tabs { display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
+    .tab-btn { border:1px solid var(--border); background:white; color:var(--text); border-radius:999px; padding:8px 12px; cursor:pointer; font-size:13px; font-weight:700; }
+    .tab-btn.active { background:var(--primary); color:white; border-color:var(--primary); }
+    .tab-panel { display:none; } .tab-panel.active { display:block; }
+    .points,.history { max-height:280px; overflow:auto; border:1px solid var(--border); border-radius:14px; padding:10px; background:#fff; }
+    .point,.history-item { border:1px solid var(--border); border-radius:12px; padding:10px; margin-bottom:8px; font-size:13px; line-height:1.55; }
+    .point:last-child,.history-item:last-child { margin-bottom:0; }
+    .history-title { font-weight:700; margin-bottom:4px; }
+    .history-meta { color:var(--muted); font-size:12px; }
+    .chart { border:1px solid var(--border); border-radius:14px; background:white; padding:12px; }
+    .chart svg { width:100%; height:170px; display:block; }
+    .mini { color:var(--muted); font-size:12px; line-height:1.6; }
+    #map { width:100%; min-height:76vh; height:100%; }
+    .upload-wrap { display:flex; gap:8px; align-items:center; }
+    .file { display:none; }
+    .footer-note { font-size:12px; color:var(--muted); line-height:1.65; margin-top:10px; }
+    @media (max-width:1024px) { .wrap { grid-template-columns:1fr; } #map { min-height:52vh; } }
   </style>
 </head>
 <body>
-  <div class="app">
+  <div class="wrap">
     <div class="card">
       <div class="panel">
         <div class="topline">
           <div>
-            <h1>GPS 軌跡紀錄器 PWA</h1>
-            <div class="sub">可安裝到手機桌面，持續記錄 GPS 軌跡，並匯出 GPX / CSV / JSON。</div>
+            <h1>GPS 軌跡紀錄器 Pro</h1>
+            <div class="sub">升級版支援暫停 / 繼續、歷史軌跡保存、GPX 匯入、速度 / 海拔圖，以及手機 PWA 安裝。</div>
           </div>
           <div id="recordBadge" class="badge">Idle</div>
         </div>
-
         <div class="field">
           <label for="trackName">軌跡名稱</label>
           <div class="inline">
@@ -128,451 +91,129 @@
             <button id="renameBtn" class="btn secondary" type="button">重設</button>
           </div>
         </div>
-
         <div class="grid-2">
           <div class="stat"><div class="k">記錄時間</div><div class="v" id="statTime">00:00:00</div></div>
           <div class="stat"><div class="k">總距離</div><div class="v" id="statDistance">0 m</div></div>
           <div class="stat"><div class="k">目前速度</div><div class="v" id="statSpeed">-- km/h</div></div>
           <div class="stat"><div class="k">平均速度</div><div class="v" id="statAvgSpeed">-- km/h</div></div>
         </div>
-
+        <div class="grid-3">
+          <div class="stat"><div class="k">最高速度</div><div class="v" id="statMaxSpeed">-- km/h</div></div>
+          <div class="stat"><div class="k">點位數</div><div class="v" id="statPoints">0</div></div>
+          <div class="stat"><div class="k">最高海拔</div><div class="v" id="statMaxAlt">-- m</div></div>
+        </div>
         <div class="btns">
           <button id="startBtn" class="btn primary" type="button">開始</button>
+          <button id="pauseBtn" class="btn warning" type="button" disabled>暫停</button>
+          <button id="resumeBtn" class="btn success" type="button" disabled>繼續</button>
           <button id="stopBtn" class="btn secondary" type="button" disabled>停止</button>
           <button id="locateBtn" class="btn secondary" type="button">更新位置</button>
-          <button id="clearBtn" class="btn danger" type="button">清除</button>
+          <button id="saveTrackBtn" class="btn success" type="button" disabled>保存此軌跡</button>
+          <button id="clearBtn" class="btn danger" type="button">清除目前</button>
         </div>
-
-        <div class="group">
-          <div class="row">
-            <div>
-              <label style="margin:0;">高精度定位</label>
-              <div class="hint">較耗電，但通常更適合戶外軌跡紀錄。</div>
-            </div>
-            <input id="highAccuracy" class="switch" type="checkbox" checked />
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="settings">設定</button>
+          <button class="tab-btn" data-tab="export">匯出 / 匯入</button>
+          <button class="tab-btn" data-tab="points">點位</button>
+          <button class="tab-btn" data-tab="history">歷史軌跡</button>
+          <button class="tab-btn" data-tab="charts">圖表</button>
+        </div>
+        <div class="tab-panel active" id="tab-settings">
+          <div class="group"><div class="row"><div><label style="margin:0;">高精度定位</label><div class="hint">較耗電，但通常更適合戶外軌跡。</div></div><input id="highAccuracy" class="switch" type="checkbox" checked /></div></div>
+          <div class="group"><div class="row"><div><label style="margin:0;">跟隨地圖</label><div class="hint">記錄時自動聚焦最新位置。</div></div><input id="followMap" class="switch" type="checkbox" checked /></div></div>
+          <div class="group"><div class="row"><div><label style="margin:0;">防止螢幕休眠</label><div class="hint">支援的瀏覽器會保持螢幕喚醒。</div></div><input id="wakeLockEnabled" class="switch" type="checkbox" checked /></div></div>
+          <div class="group"><label for="minDistance">最小記錄距離（公尺）</label><input id="minDistance" class="input" type="number" min="0" step="1" value="5" /><div class="hint">避免 GPS 漂移造成雜訊，常用值 3–10 公尺。</div></div>
+        </div>
+        <div class="tab-panel" id="tab-export">
+          <div class="group">
+            <label for="exportFormat">匯出格式</label>
+            <select id="exportFormat" class="select">
+              <option value="gpx">GPX（地圖 / 運動 App 常用）</option>
+              <option value="csv">CSV（Excel / 分析）</option>
+              <option value="json">JSON（完整資料）</option>
+            </select>
+            <div style="margin-top:10px;" class="btns"><button id="exportBtn" class="btn primary" type="button">匯出目前軌跡</button></div>
+          </div>
+          <div class="group">
+            <label>匯入 GPX</label>
+            <div class="upload-wrap"><input id="importFile" class="file" type="file" accept=".gpx,application/gpx+xml,.xml" /><button id="importBtn" class="btn secondary" type="button">選擇 GPX 檔</button></div>
+            <div class="hint">可匯入以前的 GPX 軌跡並顯示在地圖上。</div>
           </div>
         </div>
-
-        <div class="group">
-          <div class="row">
-            <div>
-              <label style="margin:0;">跟隨地圖</label>
-              <div class="hint">記錄時自動聚焦在最新位置。</div>
-            </div>
-            <input id="followMap" class="switch" type="checkbox" checked />
-          </div>
+        <div class="tab-panel" id="tab-points"><div id="pointsList" class="points"><div class="mini">目前還沒有任何紀錄點。</div></div></div>
+        <div class="tab-panel" id="tab-history">
+          <div class="btns"><button id="refreshHistoryBtn" class="btn secondary" type="button">重新整理</button><button id="clearHistoryBtn" class="btn danger" type="button">清空歷史</button></div>
+          <div id="historyList" class="history"><div class="mini">目前沒有保存的歷史軌跡。</div></div>
         </div>
-
-        <div class="group">
-          <div class="row">
-            <div>
-              <label style="margin:0;">防止螢幕休眠</label>
-              <div class="hint">支援的瀏覽器會保持螢幕喚醒。</div>
-            </div>
-            <input id="wakeLockEnabled" class="switch" type="checkbox" checked />
-          </div>
+        <div class="tab-panel" id="tab-charts">
+          <div class="chart"><label style="margin-bottom:8px;">速度圖</label><svg id="speedChart" viewBox="0 0 600 170" preserveAspectRatio="none"></svg><div class="hint">依點位順序顯示速度變化。</div></div>
+          <div style="height:10px;"></div>
+          <div class="chart"><label style="margin-bottom:8px;">海拔圖</label><svg id="altChart" viewBox="0 0 600 170" preserveAspectRatio="none"></svg><div class="hint">若裝置未提供海拔資料，圖表會維持空白。</div></div>
         </div>
-
-        <div class="group">
-          <label for="minDistance">最小記錄距離（公尺）</label>
-          <input id="minDistance" class="input" type="number" min="0" step="1" value="5" />
-          <div class="hint">避免 GPS 漂移造成過多雜訊，常用值 3–10 公尺。</div>
-        </div>
-
-        <div class="group">
-          <label for="exportFormat">匯出格式</label>
-          <select id="exportFormat" class="select">
-            <option value="gpx">GPX（地圖 / 運動 App 常用）</option>
-            <option value="csv">CSV（Excel / 分析）</option>
-            <option value="json">JSON（原始資料）</option>
-          </select>
-          <div style="margin-top:10px;">
-            <button id="exportBtn" class="btn primary" type="button" style="width:100%;">匯出軌跡</button>
-          </div>
-        </div>
-
         <div class="separator"></div>
-
-        <div class="mini">可加到主畫面，像 App 一樣開啟。</div>
-        <div class="mini">資料會自動保存在瀏覽器 localStorage。</div>
-
-        <div id="installTip" class="install-tip">
-          安裝方式：Android Chrome 可用「加入主畫面」；iPhone Safari 請用分享選單 →「加入主畫面」。
-        </div>
-
-        <div id="statusBox" class="alert" style="margin-top:12px;">
-          <strong>尚未開始</strong>
-          <span>按下開始後會持續記錄 GPS 位置。</span>
-        </div>
-
-        <div style="margin-top:14px;">
-          <label>點位列表</label>
-          <div id="pointsList" class="points">
-            <div class="footer-note">目前還沒有任何紀錄點。</div>
-          </div>
-        </div>
+        <div id="statusBox" class="alert"><strong>尚未開始</strong><span>按下開始後會持續記錄 GPS 位置。</span></div>
+        <div class="footer-note">建議手機使用 HTTPS 開啟，並允許定位權限。背景執行時，瀏覽器仍可能限制更新頻率。</div>
       </div>
     </div>
-
-    <div class="card">
-      <div id="map"></div>
-    </div>
+    <div class="card"><div id="map"></div></div>
   </div>
-
-  <script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-    crossorigin=""
-  ></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script>
-    const STORAGE_KEY = "gps-track-recorder-pwa-v1";
-    const CACHE_VERSION = "gps-track-recorder-pwa-v1";
-    const EARTH_RADIUS_M = 6371000;
-
-    const state = {
-      trackName: defaultTrackName(),
-      isRecording: false,
-      points: [],
-      status: "尚未開始",
-      error: "",
-      followMap: true,
-      highAccuracy: true,
-      minDistance: 5,
-      exportFormat: "gpx",
-      startedAt: null,
-      elapsedMs: 0,
-      wakeLockEnabled: true,
-      watchId: null,
-      wakeLock: null,
-      timer: null,
-      map: null,
-      marker: null,
-      line: null
-    };
-
-    const el = {
-      trackName: document.getElementById("trackName"),
-      renameBtn: document.getElementById("renameBtn"),
-      startBtn: document.getElementById("startBtn"),
-      stopBtn: document.getElementById("stopBtn"),
-      locateBtn: document.getElementById("locateBtn"),
-      clearBtn: document.getElementById("clearBtn"),
-      highAccuracy: document.getElementById("highAccuracy"),
-      followMap: document.getElementById("followMap"),
-      wakeLockEnabled: document.getElementById("wakeLockEnabled"),
-      minDistance: document.getElementById("minDistance"),
-      exportFormat: document.getElementById("exportFormat"),
-      exportBtn: document.getElementById("exportBtn"),
-      recordBadge: document.getElementById("recordBadge"),
-      statTime: document.getElementById("statTime"),
-      statDistance: document.getElementById("statDistance"),
-      statSpeed: document.getElementById("statSpeed"),
-      statAvgSpeed: document.getElementById("statAvgSpeed"),
-      statusBox: document.getElementById("statusBox"),
-      pointsList: document.getElementById("pointsList"),
-      installTip: document.getElementById("installTip"),
-    };
-
-    function defaultTrackName() {
-      return "track-" + new Date().toISOString().slice(0, 16).replace(/[:T]/g, "-");
-    }
-    function toRad(v) { return v * Math.PI / 180; }
-    function haversineMeters(a, b) {
-      const dLat = toRad(b.lat - a.lat);
-      const dLng = toRad(b.lng - a.lng);
-      const lat1 = toRad(a.lat);
-      const lat2 = toRad(b.lat);
-      const sinDLat = Math.sin(dLat / 2);
-      const sinDLng = Math.sin(dLng / 2);
-      const x = sinDLat * sinDLat + Math.cos(lat1) * Math.cos(lat2) * sinDLng * sinDLng;
-      const c = 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x));
-      return EARTH_RADIUS_M * c;
-    }
-    function fmtDuration(ms) {
-      const totalSec = Math.max(0, Math.floor(ms / 1000));
-      const h = Math.floor(totalSec / 3600);
-      const m = Math.floor((totalSec % 3600) / 60);
-      const s = totalSec % 60;
-      return [h, m, s].map(v => String(v).padStart(2, "0")).join(":");
-    }
-    function fmtDistance(m) {
-      if (!Number.isFinite(m)) return "0 m";
-      if (m < 1000) return m.toFixed(0) + " m";
-      return (m / 1000).toFixed(2) + " km";
-    }
-    function fmtSpeed(mps) {
-      if (!Number.isFinite(mps) || mps < 0) return "-- km/h";
-      return (mps * 3.6).toFixed(1) + " km/h";
-    }
-    function totalDistance() {
-      let d = 0;
-      for (let i = 1; i < state.points.length; i++) d += haversineMeters(state.points[i - 1], state.points[i]);
-      return d;
-    }
-    function avgSpeed() {
-      if (!state.elapsedMs) return NaN;
-      return totalDistance() / (state.elapsedMs / 1000);
-    }
-    function latestPoint() { return state.points[state.points.length - 1] || null; }
-    function escapeHtml(s) {
-      return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
-    }
-    function saveState() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        trackName: state.trackName, points: state.points, status: state.status, error: state.error,
-        followMap: state.followMap, highAccuracy: state.highAccuracy, minDistance: state.minDistance,
-        exportFormat: state.exportFormat, startedAt: state.startedAt, elapsedMs: state.elapsedMs,
-        wakeLockEnabled: state.wakeLockEnabled
-      }));
-    }
-    function loadState() {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return;
-      try {
-        const parsed = JSON.parse(raw);
-        state.trackName = parsed.trackName || state.trackName;
-        state.points = Array.isArray(parsed.points) ? parsed.points : [];
-        state.status = parsed.status || state.status;
-        state.error = parsed.error || "";
-        state.followMap = parsed.followMap !== false;
-        state.highAccuracy = parsed.highAccuracy !== false;
-        state.minDistance = Number(parsed.minDistance ?? 5);
-        state.exportFormat = parsed.exportFormat || "gpx";
-        state.startedAt = parsed.startedAt || null;
-        state.elapsedMs = parsed.elapsedMs || 0;
-        state.wakeLockEnabled = parsed.wakeLockEnabled !== false;
-      } catch (e) {
-        console.warn(e);
-      }
-    }
-    function renderPoints() {
-      if (!state.points.length) {
-        el.pointsList.innerHTML = '<div class="footer-note">目前還沒有任何紀錄點。</div>';
-        return;
-      }
-      el.pointsList.innerHTML = state.points.slice().reverse().map((p, idx) => `
-        <div class="point">
-          <div><strong>#${state.points.length - idx}</strong></div>
-          <div>${new Date(p.timestamp).toLocaleString()}</div>
-          <div>Lat: ${p.lat.toFixed(6)}</div>
-          <div>Lng: ${p.lng.toFixed(6)}</div>
-          <div>Accuracy: ${p.accuracy ? p.accuracy.toFixed(1) + " m" : "--"}</div>
-          <div>Speed: ${fmtSpeed(p.speed)}</div>
-        </div>
-      `).join("");
-    }
-    function renderMap() {
-      const latlngs = state.points.map(p => [p.lat, p.lng]);
-      state.line.setLatLngs(latlngs);
-      const latest = latestPoint();
-      if (latest) {
-        const ll = [latest.lat, latest.lng];
-        state.marker.setLatLng(ll);
-        state.marker.bindPopup(`<div style="font-size:13px;line-height:1.6;"><div style="font-weight:700;">目前位置</div><div>${latest.lat.toFixed(6)}, ${latest.lng.toFixed(6)}</div><div>精度：${latest.accuracy ? latest.accuracy.toFixed(1) : "--"} m</div></div>`);
-        if (state.followMap) {
-          if (state.points.length === 1) state.map.setView(ll, 17);
-          else state.map.fitBounds(L.latLngBounds(latlngs), { padding: [24, 24] });
-        }
-      }
-      setTimeout(() => state.map.invalidateSize(), 50);
-    }
-    function updateUI() {
-      el.trackName.value = state.trackName;
-      el.highAccuracy.checked = state.highAccuracy;
-      el.followMap.checked = state.followMap;
-      el.wakeLockEnabled.checked = state.wakeLockEnabled;
-      el.minDistance.value = String(state.minDistance);
-      el.exportFormat.value = state.exportFormat;
-      el.statTime.textContent = fmtDuration(state.elapsedMs);
-      el.statDistance.textContent = fmtDistance(totalDistance());
-      el.statSpeed.textContent = fmtSpeed(latestPoint()?.speed);
-      el.statAvgSpeed.textContent = fmtSpeed(avgSpeed());
-      el.startBtn.disabled = state.isRecording;
-      el.stopBtn.disabled = !state.isRecording;
-      el.exportBtn.disabled = state.points.length === 0;
-      el.recordBadge.textContent = state.isRecording ? "Recording" : "Idle";
-      el.recordBadge.className = "badge" + (state.isRecording ? " recording" : "");
-      const latest = latestPoint();
-      el.statusBox.innerHTML = "<strong>" + escapeHtml(state.status) + "</strong><span>" + escapeHtml(
-        state.error || (latest ? `最新點：${latest.lat.toFixed(6)}, ${latest.lng.toFixed(6)}；精度 ${latest.accuracy ? latest.accuracy.toFixed(1) : "--"} m` : "按下開始後會持續記錄 GPS 位置。")
-      ) + "</span>";
-      renderPoints();
-      renderMap();
-      saveState();
-    }
-    function initMap() {
-      state.map = L.map("map");
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { attribution: "&copy; OpenStreetMap contributors" }).addTo(state.map);
-      state.map.setView([25.033, 121.5654], 16);
-      state.line = L.polyline([], {}).addTo(state.map);
-      const icon = L.divIcon({
-        className: "",
-        html: '<div style="width:36px;height:36px;border-radius:50%;background:rgba(37,99,235,.18);display:flex;align-items:center;justify-content:center;"><div style="width:14px;height:14px;border-radius:50%;background:#2563eb;border:3px solid #fff;"></div></div>',
-        iconSize: [36, 36], iconAnchor: [18, 18]
-      });
-      state.marker = L.marker([25.033, 121.5654], { icon }).addTo(state.map);
-      state.marker.bindPopup("目前位置");
-    }
-    async function requestWakeLock() {
-      try {
-        if (!state.wakeLockEnabled || !("wakeLock" in navigator)) return;
-        state.wakeLock = await navigator.wakeLock.request("screen");
-      } catch (e) { console.warn(e); }
-    }
-    async function releaseWakeLock() {
-      try {
-        if (state.wakeLock) { await state.wakeLock.release(); state.wakeLock = null; }
-      } catch (e) { console.warn(e); }
-    }
-    function addPoint(pos) {
-      const next = {
-        lat: pos.coords.latitude, lng: pos.coords.longitude, accuracy: pos.coords.accuracy,
-        altitude: pos.coords.altitude, speed: pos.coords.speed, heading: pos.coords.heading, timestamp: pos.timestamp
-      };
-      const last = latestPoint();
-      if (last) {
-        const gap = haversineMeters(last, next);
-        if (gap < Math.max(0, Number(state.minDistance) || 0)) return;
-        if (next.timestamp === last.timestamp) return;
-      }
-      state.points.push(next);
-      state.status = "正在記錄";
-      state.error = "";
-      updateUI();
-    }
-    async function startRecording() {
-      state.error = "";
-      if (!("geolocation" in navigator)) {
-        state.error = "此裝置或瀏覽器不支援 Geolocation API。";
-        state.status = "無法使用定位";
-        updateUI();
-        return;
-      }
-      if (state.watchId !== null) navigator.geolocation.clearWatch(state.watchId);
-      state.startedAt = Date.now();
-      state.elapsedMs = 0;
-      state.isRecording = true;
-      state.status = "正在記錄";
-      await requestWakeLock();
-      state.timer = setInterval(() => {
-        if (state.startedAt) { state.elapsedMs = Date.now() - state.startedAt; updateUI(); }
-      }, 1000);
-      state.watchId = navigator.geolocation.watchPosition(
-        (position) => addPoint(position),
-        (err) => {
-          const messages = {
-            1: "定位權限被拒絕，請在瀏覽器設定中允許位置存取。",
-            2: "無法取得定位資訊，請確認 GPS / 網路已開啟。",
-            3: "定位逾時，請移動到空曠處或稍後再試。"
-          };
-          state.error = messages[err.code] || err.message || "定位失敗";
-          state.status = "定位失敗";
-          updateUI();
-        },
-        { enableHighAccuracy: state.highAccuracy, maximumAge: 0, timeout: 15000 }
-      );
-      updateUI();
-    }
-    async function stopRecording() {
-      if (state.watchId !== null) { navigator.geolocation.clearWatch(state.watchId); state.watchId = null; }
-      if (state.timer) { clearInterval(state.timer); state.timer = null; }
-      await releaseWakeLock();
-      state.isRecording = false;
-      state.status = state.points.length ? "已停止" : "尚未開始";
-      updateUI();
-    }
-    async function clearAll() {
-      await stopRecording();
-      state.points = [];
-      state.startedAt = null;
-      state.elapsedMs = 0;
-      state.error = "";
-      state.status = "已清除";
-      updateUI();
-    }
-    function updateCurrentPosition() {
-      if (!("geolocation" in navigator)) return;
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          addPoint(pos);
-          state.status = state.isRecording ? "正在記錄" : "已更新目前位置";
-          updateUI();
-        },
-        (err) => {
-          state.error = err.message || "無法更新目前位置";
-          updateUI();
-        },
-        { enableHighAccuracy: true, maximumAge: 0, timeout: 15000 }
-      );
-    }
-    function downloadText(filename, content, mime) {
-      const blob = new Blob([content], { type: mime });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url; a.download = filename; a.click();
-      URL.revokeObjectURL(url);
-    }
-    function exportCSV() {
-      const header = "index,time,lat,lng,accuracy_m,altitude_m,speed_mps,heading_deg\n";
-      const body = state.points.map((p, i) => [i + 1, new Date(p.timestamp).toISOString(), p.lat, p.lng, p.accuracy ?? "", p.altitude ?? "", p.speed ?? "", p.heading ?? ""].join(",")).join("\n");
-      downloadText((state.trackName || "gps-track") + ".csv", header + body, "text/csv;charset=utf-8");
-    }
-    function exportJSON() {
-      const payload = JSON.stringify({
-        trackName: state.trackName,
-        meta: { startedAt: state.startedAt, elapsedMs: state.elapsedMs, distanceMeters: totalDistance(), avgSpeedMps: avgSpeed(), exportedAt: Date.now() },
-        points: state.points
-      }, null, 2);
-      downloadText((state.trackName || "gps-track") + ".json", payload, "application/json;charset=utf-8");
-    }
-    function exportGPX() {
-      const trkpts = state.points.map(p => {
-        const ele = Number.isFinite(p.altitude) ? `<ele>${p.altitude}</ele>` : "";
-        return `<trkpt lat="${p.lat}" lon="${p.lng}">${ele}<time>${new Date(p.timestamp).toISOString()}</time></trkpt>`;
-      }).join("");
-      const gpx = `<?xml version="1.0" encoding="UTF-8"?>
-<gpx version="1.1" creator="ChatGPT GPS Track Recorder" xmlns="http://www.topografix.com/GPX/1/1">
-  <trk><name>${String(state.trackName || "gps-track").replace(/[<>]/g, "")}</name><trkseg>${trkpts}</trkseg></trk>
-</gpx>`;
-      downloadText((state.trackName || "gps-track") + ".gpx", gpx, "application/gpx+xml;charset=utf-8");
-    }
-    function exportTrack() {
-      if (!state.points.length) return;
-      if (state.exportFormat === "csv") exportCSV();
-      else if (state.exportFormat === "json") exportJSON();
-      else exportGPX();
-    }
-    function bindEvents() {
-      el.trackName.addEventListener("input", () => { state.trackName = el.trackName.value; saveState(); });
-      el.renameBtn.addEventListener("click", () => { state.trackName = defaultTrackName(); updateUI(); });
-      el.startBtn.addEventListener("click", startRecording);
-      el.stopBtn.addEventListener("click", stopRecording);
-      el.locateBtn.addEventListener("click", updateCurrentPosition);
-      el.clearBtn.addEventListener("click", clearAll);
-      el.highAccuracy.addEventListener("change", () => { state.highAccuracy = el.highAccuracy.checked; saveState(); });
-      el.followMap.addEventListener("change", () => { state.followMap = el.followMap.checked; updateUI(); });
-      el.wakeLockEnabled.addEventListener("change", () => { state.wakeLockEnabled = el.wakeLockEnabled.checked; saveState(); });
-      el.minDistance.addEventListener("input", () => { state.minDistance = Number(el.minDistance.value || 0); saveState(); });
-      el.exportFormat.addEventListener("change", () => { state.exportFormat = el.exportFormat.value; saveState(); });
-      el.exportBtn.addEventListener("click", exportTrack);
-      document.addEventListener("visibilitychange", async () => {
-        if (document.visibilityState === "visible" && state.isRecording) await requestWakeLock();
-      });
-      window.addEventListener("beforeunload", saveState);
-    }
-    async function registerSW() {
-      if (!("serviceWorker" in navigator)) return;
-      try {
-        await navigator.serviceWorker.register("./service-worker.js");
-      } catch (e) {
-        console.warn("SW register failed", e);
-      }
-    }
-    loadState();
-    initMap();
-    bindEvents();
-    updateUI();
-    registerSW();
+    const STORAGE_KEY="gps-track-recorder-pro-state-v2", HISTORY_KEY="gps-track-recorder-pro-history-v2", EARTH_RADIUS_M=6371000;
+    const state={trackName:defaultTrackName(),isRecording:false,isPaused:false,points:[],status:"尚未開始",error:"",followMap:true,highAccuracy:true,minDistance:5,exportFormat:"gpx",startedAt:null,elapsedMs:0,pausedAccumulatedMs:0,pauseStartedAt:null,wakeLockEnabled:true,watchId:null,wakeLock:null,timer:null,map:null,marker:null,line:null};
+    const el={trackName:document.getElementById("trackName"),renameBtn:document.getElementById("renameBtn"),startBtn:document.getElementById("startBtn"),pauseBtn:document.getElementById("pauseBtn"),resumeBtn:document.getElementById("resumeBtn"),stopBtn:document.getElementById("stopBtn"),locateBtn:document.getElementById("locateBtn"),saveTrackBtn:document.getElementById("saveTrackBtn"),clearBtn:document.getElementById("clearBtn"),highAccuracy:document.getElementById("highAccuracy"),followMap:document.getElementById("followMap"),wakeLockEnabled:document.getElementById("wakeLockEnabled"),minDistance:document.getElementById("minDistance"),exportFormat:document.getElementById("exportFormat"),exportBtn:document.getElementById("exportBtn"),importBtn:document.getElementById("importBtn"),importFile:document.getElementById("importFile"),refreshHistoryBtn:document.getElementById("refreshHistoryBtn"),clearHistoryBtn:document.getElementById("clearHistoryBtn"),recordBadge:document.getElementById("recordBadge"),statTime:document.getElementById("statTime"),statDistance:document.getElementById("statDistance"),statSpeed:document.getElementById("statSpeed"),statAvgSpeed:document.getElementById("statAvgSpeed"),statMaxSpeed:document.getElementById("statMaxSpeed"),statPoints:document.getElementById("statPoints"),statMaxAlt:document.getElementById("statMaxAlt"),statusBox:document.getElementById("statusBox"),pointsList:document.getElementById("pointsList"),historyList:document.getElementById("historyList"),speedChart:document.getElementById("speedChart"),altChart:document.getElementById("altChart"),tabBtns:Array.from(document.querySelectorAll(".tab-btn"))};
+    function defaultTrackName(){return "track-"+new Date().toISOString().slice(0,16).replace(/[:T]/g,"-");}
+    function toRad(v){return v*Math.PI/180;}
+    function haversineMeters(a,b){const dLat=toRad(b.lat-a.lat), dLng=toRad(b.lng-a.lng), lat1=toRad(a.lat), lat2=toRad(b.lat), sinDLat=Math.sin(dLat/2), sinDLng=Math.sin(dLng/2), x=sinDLat*sinDLat+Math.cos(lat1)*Math.cos(lat2)*sinDLng*sinDLng, c=2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x)); return EARTH_RADIUS_M*c;}
+    function fmtDuration(ms){const totalSec=Math.max(0,Math.floor(ms/1000)), h=Math.floor(totalSec/3600), m=Math.floor((totalSec%3600)/60), s=totalSec%60; return [h,m,s].map(v=>String(v).padStart(2,"0")).join(":");}
+    function fmtDistance(m){if(!Number.isFinite(m)) return "0 m"; if(m<1000) return m.toFixed(0)+" m"; return (m/1000).toFixed(2)+" km";}
+    function fmtSpeed(mps){if(!Number.isFinite(mps)||mps<0) return "-- km/h"; return (mps*3.6).toFixed(1)+" km/h";}
+    function fmtAlt(m){if(!Number.isFinite(m)) return "-- m"; return m.toFixed(0)+" m";}
+    function latestPoint(){return state.points[state.points.length-1]||null;}
+    function totalDistance(){let d=0; for(let i=1;i<state.points.length;i++) d+=haversineMeters(state.points[i-1],state.points[i]); return d;}
+    function avgSpeed(){if(!state.elapsedMs) return NaN; return totalDistance()/(state.elapsedMs/1000);}
+    function maxSpeed(){const speeds=state.points.map(p=>Number(p.speed)).filter(v=>Number.isFinite(v)&&v>=0); return speeds.length?Math.max(...speeds):NaN;}
+    function maxAltitude(){const alts=state.points.map(p=>Number(p.altitude)).filter(v=>Number.isFinite(v)); return alts.length?Math.max(...alts):NaN;}
+    function escapeHtml(s){return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");}
+    function saveState(){localStorage.setItem(STORAGE_KEY,JSON.stringify({trackName:state.trackName,points:state.points,status:state.status,error:state.error,followMap:state.followMap,highAccuracy:state.highAccuracy,minDistance:state.minDistance,exportFormat:state.exportFormat,startedAt:state.startedAt,elapsedMs:state.elapsedMs,pausedAccumulatedMs:state.pausedAccumulatedMs,pauseStartedAt:state.pauseStartedAt,isPaused:state.isPaused,wakeLockEnabled:state.wakeLockEnabled}));}
+    function loadState(){const raw=localStorage.getItem(STORAGE_KEY); if(!raw) return; try{const parsed=JSON.parse(raw); state.trackName=parsed.trackName||state.trackName; state.points=Array.isArray(parsed.points)?parsed.points:[]; state.status=parsed.status||state.status; state.error=parsed.error||""; state.followMap=parsed.followMap!==false; state.highAccuracy=parsed.highAccuracy!==false; state.minDistance=Number(parsed.minDistance??5); state.exportFormat=parsed.exportFormat||"gpx"; state.startedAt=parsed.startedAt||null; state.elapsedMs=parsed.elapsedMs||0; state.pausedAccumulatedMs=parsed.pausedAccumulatedMs||0; state.pauseStartedAt=parsed.pauseStartedAt||null; state.isPaused=!!parsed.isPaused; state.wakeLockEnabled=parsed.wakeLockEnabled!==false;}catch(e){console.warn(e);}}
+    function getHistory(){try{const data=JSON.parse(localStorage.getItem(HISTORY_KEY)||"[]"); return Array.isArray(data)?data:[];}catch{return [];}}
+    function setHistory(items){localStorage.setItem(HISTORY_KEY,JSON.stringify(items));}
+    function saveCurrentTrackToHistory(){if(!state.points.length) return; const items=getHistory(); items.unshift({id:"trk_"+Date.now()+"_"+Math.random().toString(36).slice(2,8),name:state.trackName||defaultTrackName(),createdAt:Date.now(),pointCount:state.points.length,distanceMeters:totalDistance(),elapsedMs:state.elapsedMs,points:state.points}); setHistory(items.slice(0,50)); renderHistory();}
+    function removeHistoryItem(id){setHistory(getHistory().filter(item=>item.id!==id)); renderHistory();}
+    function clearHistory(){setHistory([]); renderHistory();}
+    function loadHistoryItem(id){const item=getHistory().find(x=>x.id===id); if(!item) return; state.trackName=item.name; state.points=item.points||[]; state.status="已載入歷史軌跡"; state.error=""; state.isRecording=false; state.isPaused=false; state.startedAt=null; state.pauseStartedAt=null; state.pausedAccumulatedMs=0; state.elapsedMs=item.elapsedMs||0; stopWatcherOnly(); updateUI();}
+    window.loadHistoryItem=loadHistoryItem; window.removeHistoryItem=removeHistoryItem;
+    function drawLineChart(svgEl,values,lineColor,fillColor){const width=600,height=170,pad=16; svgEl.innerHTML=""; if(!values.length){svgEl.innerHTML='<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#94a3b8" font-size="14">目前沒有資料</text>'; return;} const finite=values.filter(v=>Number.isFinite(v)); if(!finite.length){svgEl.innerHTML='<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#94a3b8" font-size="14">此資料不可用</text>'; return;} const min=Math.min(...finite), max=Math.max(...finite), span=max-min||1; const pts=values.map((v,i)=>{const x=pad+((width-pad*2)*(values.length===1?0:i/(values.length-1))); const y=pad+((height-pad*2)*(1-((Number.isFinite(v)?v:min)-min)/span)); return [x,y];}); const line=pts.map(([x,y])=>`${x},${y}`).join(" "); const area=`M ${pts[0][0]} ${height-pad} `+pts.map(([x,y])=>`L ${x} ${y}`).join(" ")+` L ${pts[pts.length-1][0]} ${height-pad} Z`; svgEl.innerHTML=`<line x1="${pad}" y1="${height-pad}" x2="${width-pad}" y2="${height-pad}" stroke="#e2e8f0" stroke-width="1"/><line x1="${pad}" y1="${pad}" x2="${pad}" y2="${height-pad}" stroke="#e2e8f0" stroke-width="1"/><path d="${area}" fill="${fillColor}" /><polyline fill="none" stroke="${lineColor}" stroke-width="3" points="${line}" />`; }
+    function updateCharts(){drawLineChart(el.speedChart,state.points.map(p=>Number.isFinite(p.speed)?p.speed*3.6:NaN),"#2563eb","rgba(37,99,235,.15)"); drawLineChart(el.altChart,state.points.map(p=>Number(p.altitude)),"#16a34a","rgba(22,163,74,.15)");}
+    function renderPoints(){if(!state.points.length){el.pointsList.innerHTML='<div class="mini">目前還沒有任何紀錄點。</div>'; return;} el.pointsList.innerHTML=state.points.slice().reverse().map((p,idx)=>`<div class="point"><div><strong>#${state.points.length-idx}</strong></div><div>${new Date(p.timestamp).toLocaleString()}</div><div>Lat: ${p.lat.toFixed(6)}</div><div>Lng: ${p.lng.toFixed(6)}</div><div>Accuracy: ${p.accuracy?p.accuracy.toFixed(1)+" m":"--"}</div><div>Speed: ${fmtSpeed(p.speed)}</div><div>Altitude: ${fmtAlt(Number(p.altitude))}</div></div>`).join("");}
+    function initMap(){state.map=L.map("map"); L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{attribution:"&copy; OpenStreetMap contributors"}).addTo(state.map); state.map.setView([25.033,121.5654],16); state.line=L.polyline([],{weight:4}).addTo(state.map); const icon=L.divIcon({className:"",html:'<div style="width:36px;height:36px;border-radius:50%;background:rgba(37,99,235,.18);display:flex;align-items:center;justify-content:center;"><div style="width:14px;height:14px;border-radius:50%;background:#2563eb;border:3px solid #fff;"></div></div>',iconSize:[36,36],iconAnchor:[18,18]}); state.marker=L.marker([25.033,121.5654],{icon}).addTo(state.map); state.marker.bindPopup("目前位置");}
+    function renderMap(){const latlngs=state.points.map(p=>[p.lat,p.lng]); state.line.setLatLngs(latlngs); const latest=latestPoint(); if(latest){const ll=[latest.lat,latest.lng]; state.marker.setLatLng(ll); state.marker.bindPopup(`<div style="font-size:13px;line-height:1.6;"><div style="font-weight:700;">目前位置</div><div>${latest.lat.toFixed(6)}, ${latest.lng.toFixed(6)}</div><div>精度：${latest.accuracy?latest.accuracy.toFixed(1):"--"} m</div></div>`); if(state.followMap){if(latlngs.length===1) state.map.setView(ll,17); if(latlngs.length>=2) state.map.fitBounds(L.latLngBounds(latlngs),{padding:[24,24]});}} setTimeout(()=>state.map.invalidateSize(),30);}
+    async function requestWakeLock(){try{if(!state.wakeLockEnabled||!("wakeLock" in navigator)) return; state.wakeLock=await navigator.wakeLock.request("screen");}catch(e){console.warn(e);}}
+    async function releaseWakeLock(){try{if(state.wakeLock){await state.wakeLock.release(); state.wakeLock=null;}}catch(e){console.warn(e);}}
+    function stopWatcherOnly(){if(state.watchId!==null){navigator.geolocation.clearWatch(state.watchId); state.watchId=null;} if(state.timer){clearInterval(state.timer); state.timer=null;}}
+    function updateElapsed(){if(!state.startedAt) return; const pausedNow=state.isPaused&&state.pauseStartedAt?(Date.now()-state.pauseStartedAt):0; state.elapsedMs=Date.now()-state.startedAt-state.pausedAccumulatedMs-pausedNow; if(state.elapsedMs<0) state.elapsedMs=0;}
+    function startTimer(){if(state.timer) clearInterval(state.timer); state.timer=setInterval(()=>{updateElapsed(); updateUI();},1000);}
+    function addPoint(pos){if(state.isPaused) return; const next={lat:pos.coords.latitude,lng:pos.coords.longitude,accuracy:pos.coords.accuracy,altitude:pos.coords.altitude,speed:pos.coords.speed,heading:pos.coords.heading,timestamp:pos.timestamp}; const last=latestPoint(); if(last){const gap=haversineMeters(last,next); if(gap<Math.max(0,Number(state.minDistance)||0)) return; if(next.timestamp===last.timestamp) return;} state.points.push(next); state.status="正在記錄"; state.error=""; updateElapsed(); updateUI();}
+    async function startRecording(){state.error=""; if(!("geolocation" in navigator)){state.error="此裝置或瀏覽器不支援 Geolocation API。"; state.status="無法使用定位"; updateUI(); return;} stopWatcherOnly(); state.startedAt=Date.now(); state.elapsedMs=0; state.pausedAccumulatedMs=0; state.pauseStartedAt=null; state.isRecording=true; state.isPaused=false; state.status="正在記錄"; await requestWakeLock(); startTimer(); state.watchId=navigator.geolocation.watchPosition(addPoint,(err)=>{const messages={1:"定位權限被拒絕，請在瀏覽器設定中允許位置存取。",2:"無法取得定位資訊，請確認 GPS / 網路已開啟。",3:"定位逾時，請移動到空曠處或稍後再試。"}; state.error=messages[err.code]||err.message||"定位失敗"; state.status="定位失敗"; updateUI();},{enableHighAccuracy:state.highAccuracy,maximumAge:0,timeout:15000}); updateUI();}
+    function pauseRecording(){if(!state.isRecording||state.isPaused) return; state.isPaused=true; state.pauseStartedAt=Date.now(); state.status="已暫停"; updateUI();}
+    function resumeRecording(){if(!state.isRecording||!state.isPaused) return; state.pausedAccumulatedMs+=Date.now()-state.pauseStartedAt; state.pauseStartedAt=null; state.isPaused=false; state.status="正在記錄"; updateUI();}
+    async function stopRecording(){stopWatcherOnly(); await releaseWakeLock(); if(state.isPaused&&state.pauseStartedAt){state.pausedAccumulatedMs+=Date.now()-state.pauseStartedAt; state.pauseStartedAt=null;} state.isRecording=false; state.isPaused=false; updateElapsed(); state.status=state.points.length?"已停止":"尚未開始"; updateUI();}
+    async function clearCurrentTrack(){await stopRecording(); state.points=[]; state.trackName=defaultTrackName(); state.startedAt=null; state.elapsedMs=0; state.pausedAccumulatedMs=0; state.pauseStartedAt=null; state.error=""; state.status="已清除目前軌跡"; updateUI();}
+    function updateCurrentPosition(){if(!("geolocation" in navigator)) return; navigator.geolocation.getCurrentPosition((pos)=>{addPoint(pos); state.status=state.isRecording?(state.isPaused?"已暫停":"正在記錄"):"已更新目前位置"; updateUI();},(err)=>{state.error=err.message||"無法更新目前位置"; updateUI();},{enableHighAccuracy:true,maximumAge:0,timeout:15000});}
+    function updateUI(){el.trackName.value=state.trackName; el.highAccuracy.checked=state.highAccuracy; el.followMap.checked=state.followMap; el.wakeLockEnabled.checked=state.wakeLockEnabled; el.minDistance.value=String(state.minDistance); el.exportFormat.value=state.exportFormat; el.statTime.textContent=fmtDuration(state.elapsedMs); el.statDistance.textContent=fmtDistance(totalDistance()); el.statSpeed.textContent=fmtSpeed(latestPoint()?.speed); el.statAvgSpeed.textContent=fmtSpeed(avgSpeed()); el.statMaxSpeed.textContent=fmtSpeed(maxSpeed()); el.statPoints.textContent=String(state.points.length); el.statMaxAlt.textContent=fmtAlt(maxAltitude()); el.startBtn.disabled=state.isRecording; el.pauseBtn.disabled=!state.isRecording||state.isPaused; el.resumeBtn.disabled=!state.isRecording||!state.isPaused; el.stopBtn.disabled=!state.isRecording&&!state.points.length; el.exportBtn.disabled=state.points.length===0; el.saveTrackBtn.disabled=state.points.length===0; if(state.isPaused){el.recordBadge.textContent="Paused"; el.recordBadge.className="badge paused";} else if(state.isRecording){el.recordBadge.textContent="Recording"; el.recordBadge.className="badge recording";} else {el.recordBadge.textContent="Idle"; el.recordBadge.className="badge";} const latest=latestPoint(); el.statusBox.innerHTML="<strong>"+escapeHtml(state.status)+"</strong><span>"+escapeHtml(state.error||(latest?`最新點：${latest.lat.toFixed(6)}, ${latest.lng.toFixed(6)}；精度 ${latest.accuracy?latest.accuracy.toFixed(1):"--"} m`:"按下開始後會持續記錄 GPS 位置。"))+"</span>"; renderPoints(); renderMap(); renderHistory(); updateCharts(); saveState();}
+    function downloadText(filename,content,mime){const blob=new Blob([content],{type:mime}); const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download=filename; a.click(); URL.revokeObjectURL(url);}
+    function exportCSV(){const header="index,time,lat,lng,accuracy_m,altitude_m,speed_mps,heading_deg\n"; const body=state.points.map((p,i)=>[i+1,new Date(p.timestamp).toISOString(),p.lat,p.lng,p.accuracy??"",p.altitude??"",p.speed??"",p.heading??""].join(",")).join("\n"); downloadText((state.trackName||"gps-track")+".csv",header+body,"text/csv;charset=utf-8");}
+    function exportJSON(){const payload=JSON.stringify({trackName:state.trackName,meta:{startedAt:state.startedAt,elapsedMs:state.elapsedMs,distanceMeters:totalDistance(),avgSpeedMps:avgSpeed(),exportedAt:Date.now()},points:state.points},null,2); downloadText((state.trackName||"gps-track")+".json",payload,"application/json;charset=utf-8");}
+    function exportGPX(){const trkpts=state.points.map(p=>{const ele=Number.isFinite(p.altitude)?`<ele>${p.altitude}</ele>`:""; return `<trkpt lat="${p.lat}" lon="${p.lng}">${ele}<time>${new Date(p.timestamp).toISOString()}</time></trkpt>`;}).join(""); const gpx=`<?xml version="1.0" encoding="UTF-8"?><gpx version="1.1" creator="ChatGPT GPS Track Recorder Pro" xmlns="http://www.topografix.com/GPX/1/1"><trk><name>${String(state.trackName||"gps-track").replace(/[<>]/g,"")}</name><trkseg>${trkpts}</trkseg></trk></gpx>`; downloadText((state.trackName||"gps-track")+".gpx",gpx,"application/gpx+xml;charset=utf-8");}
+    function exportTrack(){if(!state.points.length) return; if(state.exportFormat==="csv") exportCSV(); else if(state.exportFormat==="json") exportJSON(); else exportGPX();}
+    function switchTab(name){document.querySelectorAll(".tab-panel").forEach(p=>p.classList.remove("active")); document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active")); document.getElementById("tab-"+name).classList.add("active"); document.querySelector(`.tab-btn[data-tab="${name}"]`).classList.add("active"); setTimeout(()=>state.map.invalidateSize(),50);}
+    function parseGPX(text){const xml=new DOMParser().parseFromString(text,"application/xml"); const trkpts=Array.from(xml.getElementsByTagName("trkpt")); return trkpts.map((node,idx)=>{const eleNode=node.getElementsByTagName("ele")[0], timeNode=node.getElementsByTagName("time")[0]; return {lat:Number(node.getAttribute("lat")),lng:Number(node.getAttribute("lon")),accuracy:null,altitude:eleNode?Number(eleNode.textContent):null,speed:null,heading:null,timestamp:timeNode?Date.parse(timeNode.textContent):Date.now()+idx*1000};}).filter(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lng));}
+    async function importGPXFile(file){const text=await file.text(), pts=parseGPX(text); if(!pts.length){state.error="這個 GPX 檔沒有可用軌跡點。"; state.status="匯入失敗"; updateUI(); return;} await stopRecording(); state.points=pts; state.trackName=file.name.replace(/\.gpx$/i,"")||defaultTrackName(); state.elapsedMs=pts.length>1?Math.max(0,pts[pts.length-1].timestamp-pts[0].timestamp):0; state.status="已匯入 GPX"; state.error=""; updateUI();}
+    function renderHistory(){const items=getHistory(); if(!items.length){el.historyList.innerHTML='<div class="mini">目前沒有保存的歷史軌跡。</div>'; return;} el.historyList.innerHTML=items.map(item=>`<div class="history-item"><div class="history-title">${escapeHtml(item.name||"未命名軌跡")}</div><div class="history-meta">${new Date(item.createdAt).toLocaleString()}</div><div>距離：${fmtDistance(item.distanceMeters||0)}</div><div>時間：${fmtDuration(item.elapsedMs||0)}</div><div>點位：${item.pointCount||0}</div><div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;"><button class="btn secondary" type="button" onclick="loadHistoryItem('${item.id}')">載入</button><button class="btn danger" type="button" onclick="removeHistoryItem('${item.id}')">刪除</button></div></div>`).join("");}
+    function bindEvents(){el.trackName.addEventListener("input",()=>{state.trackName=el.trackName.value; saveState();}); el.renameBtn.addEventListener("click",()=>{state.trackName=defaultTrackName(); updateUI();}); el.startBtn.addEventListener("click",startRecording); el.pauseBtn.addEventListener("click",pauseRecording); el.resumeBtn.addEventListener("click",resumeRecording); el.stopBtn.addEventListener("click",stopRecording); el.locateBtn.addEventListener("click",updateCurrentPosition); el.clearBtn.addEventListener("click",clearCurrentTrack); el.saveTrackBtn.addEventListener("click",()=>{saveCurrentTrackToHistory(); state.status="已保存到歷史軌跡"; updateUI();}); el.highAccuracy.addEventListener("change",()=>{state.highAccuracy=el.highAccuracy.checked; saveState();}); el.followMap.addEventListener("change",()=>{state.followMap=el.followMap.checked; updateUI();}); el.wakeLockEnabled.addEventListener("change",()=>{state.wakeLockEnabled=el.wakeLockEnabled.checked; saveState();}); el.minDistance.addEventListener("input",()=>{state.minDistance=Number(el.minDistance.value||0); saveState();}); el.exportFormat.addEventListener("change",()=>{state.exportFormat=el.exportFormat.value; saveState();}); el.exportBtn.addEventListener("click",exportTrack); el.importBtn.addEventListener("click",()=>el.importFile.click()); el.importFile.addEventListener("change",(e)=>{const file=e.target.files&&e.target.files[0]; if(file) importGPXFile(file); e.target.value="";}); el.refreshHistoryBtn.addEventListener("click",renderHistory); el.clearHistoryBtn.addEventListener("click",()=>{if(confirm("確定要清空所有歷史軌跡嗎？")) clearHistory();}); el.tabBtns.forEach(btn=>btn.addEventListener("click",()=>switchTab(btn.dataset.tab))); document.addEventListener("visibilitychange",async()=>{if(document.visibilityState==="visible"&&state.isRecording&&!state.isPaused){await requestWakeLock();}}); window.addEventListener("beforeunload",saveState);}
+    async function registerSW(){if(!("serviceWorker" in navigator)) return; try{await navigator.serviceWorker.register("./service-worker.js");}catch(e){console.warn(e);}}
+    loadState(); initMap(); bindEvents(); renderHistory(); updateUI(); registerSW();
   </script>
 </body>
 </html>
