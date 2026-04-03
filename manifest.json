@@ -1,7 +1,7 @@
 {
-  "name": "GPS 軌跡紀錄器 Pro",
-  "short_name": "GPS Pro",
-  "description": "支援暫停、歷史軌跡、GPX 匯入的 GPS 軌跡紀錄器",
+  "name": "GPS 軌跡紀錄器 BG+",
+  "short_name": "GPS BG+",
+  "description": "背景友善強化版 GPS 軌跡紀錄器",
   "start_url": "/qps_track/index.html",
   "display": "standalone",
   "background_color": "#f8fafc",
